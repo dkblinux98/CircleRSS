@@ -1,0 +1,61 @@
+<style>
+    /* Basic styling for the article element */
+    article {
+        padding: 5px;               /* Padding inside the box */
+        margin-bottom: 5px;         /* Margin at the bottom for spacing between articles */
+        transition: background-color 0.1s ease;  /* Smooth transition for hover effects */
+    }
+
+    article h3 a {
+        color: #000;              /* A nice shade of blue for links */
+        text-decoration: none;       /* Remove underline from links */
+    }
+
+    article h3 a:hover {
+        text-decoration: none;  /* Add underline on hover for title links only */
+        background-color: #FFCC02;   /* Slightly darker background on hover */
+    }
+
+    article h3 a::before {
+        content: " \2192"; /* Unicode for the right arrow (→) */
+        padding-left: 5px; /* Add some space between the link text and the arrow */
+    }
+
+    article h3 {
+        font-size: 1em;            /* Make the title a bit larger */
+        margin-top: 0;               /* Remove top margin for better alignment */
+        margin-bottom: 5px;         /* A little space between the title and content */
+    }
+
+</style>
+
+<div id="rssWidget">
+    <script>
+        const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/announcements-rss.xml';
+
+        fetch(`${RSS_URL}`)
+            .then(response => response.text())
+            .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+            .then(data => {
+                const items = data.querySelectorAll('item');
+                let html = '';
+                items.forEach(el => {
+                    const title = el.querySelector('title').textContent;
+                    const link = el.querySelector('link').textContent;
+                    const author = el.querySelector('author').textContent;
+                    const published_date = el.querySelector('published_date').textContent;
+                    const body = el.querySelector('body').textContent;
+                    html += `
+                <article>
+                    <h3><a href="${link}" target="_blank">${title} by ${author}, Published ${published_date}</a></h3>
+                    <div>${body}</div>
+                </article>
+            `;
+                });
+                document.getElementById('rssWidget').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    </script>
+</div>
