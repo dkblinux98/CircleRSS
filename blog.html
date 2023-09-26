@@ -1,73 +1,103 @@
 <style>
-    /* Basic styling for the article element */
-    article {
-        padding: 5px;               /* Padding inside the box */
-        margin-bottom: 5px;         /* Margin at the bottom for spacing between articles */
-        transition: background-color 0.1s ease;  /* Smooth transition for hover effects */
-    }
+/* Basic styling for the article element */
+item {
+    font-family: lora;
+    padding: 10px;  
+    margin: 0;  
+    background-color: rgba(50, 39, 59, 0.6);  /* 70% opaque background color */
+    border: 1px rgba(50, 39, 59, 0.6);  
+    border-radius: 5px;  
+    transition: background-color 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);  /* Darker and wider drop shadow */
+}
 
-    article h3 a {
-        color: #000;              /* A nice shade of blue for links */
-        text-decoration: none;       /* Remove underline from links */
-    }
+item:hover {
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);  /* Even darker and wider shadow on hover */
+}
 
-    article h3 a:hover {
-        text-decoration: none;  /* Add underline on hover for title links only */
-        background-color: #FFCC02;   /* Slightly darker background on hover */
-    }
+item h3 a {
+    color: #fff;
+    text-decoration: none; 
+}
 
-    article h3 a::before {
-        content: " \1F4D6"; /* Unicode for book */
-        padding-right: 10px; /* Add some space between the link text and the arrow */
-    }
+item h3 a:hover {
+    text-decoration: none;
+    background-color: rgba(50, 39, 59, 0.4);  /* 70% opaque background color */
+    color: #fff;
+}
 
-    article h3 {
-        font-size: 1em;            /* Make the title a bit larger */
-        margin-top: 0;               /* Remove top margin for better alignment */
-        margin-bottom: 5px;         /* A little space between the title and content */
-    }
+item h3 a::before {
+    content: " \1F4D6 "; /* Unicode for book */
+    padding-right: 10px; 
+}
 
+item h3 {
+    font-size: 1.7em;            
+    margin-top: 0;               
+    margin-bottom: 5px;         
+}
+
+#rssWidget {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+    padding: 15px;
+    background-color: rgba(239, 240, 241, 0.7);  
+    border-top-left-radius: 15px;           
+    border-bottom-right-radius: 15px;       
+}
+
+.item-meta {
+    font-size: 0.9em;             
+    margin-bottom: 5px;          
+    color: #000;                 
+}
+
+.item-meta span {
+    margin-right: 3px;           
+    margin-left: 3px;
+}
 </style>
-
 <div id="rssWidget">
     <script>
     function formatDate(isoDateString) {
-    const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
 
-    const date = new Date(isoDateString);
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
+        const date = new Date(isoDateString);
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
 
-    return `${month} ${day}, ${year}`;
-}
+        return `${month} ${day}, ${year}`;
+    }
 
-        const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/rss.xml';
+    const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/rss.xml';
 
-        fetch(`${RSS_URL}`)
-            .then(response => response.text())
-            .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-            .then(data => {
-                const items = data.querySelectorAll('item');
-                let html = '';
-                items.forEach(el => {
-                    const title = el.querySelector('title').textContent;
-                    const link = el.querySelector('link').textContent;
-                    const author = el.querySelector('author').textContent;
-                    const published_date = el.querySelector('published_date').textContent;
-                    html += `
-                <article>
-                    <h3><a href="${link}" target="_blank">${title} by ${author}, Published ${formatDate(published_date)}</a></h3>
-                </article>
-            `;
-                });
-                document.getElementById('rssWidget').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
+    fetch(`${RSS_URL}`)
+        .then(response => response.text())
+        .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+        .then(data => {
+            const items = data.querySelectorAll('item');
+            let html = '';
+            items.forEach(el => {
+                const title = el.querySelector('title').textContent;
+                const link = el.querySelector('link').textContent;
+                const author = el.querySelector('author').textContent;
+                const published_date = el.querySelector('published_date').textContent;
+                html += `
+                    <item>
+                        <p class="item-meta"><span>${author}</span> &bull; <span>${formatDate(published_date)}</span></p>
+                        <h3><a href="${link}" target="_blank">${title}</a></h3>
+                    </item>
+                `;
             });
+            document.getElementById('rssWidget').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('There was an error!', error);
+        });
     </script>
 </div>
