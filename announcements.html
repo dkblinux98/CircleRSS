@@ -1,6 +1,7 @@
 <style>
     /* Basic styling for the article element */
     article {
+        font-family: lora;
         padding: 5px;               /* Padding inside the box */
         margin-bottom: 5px;         /* Margin at the bottom for spacing between articles */
         transition: background-color 0.1s ease;  /* Smooth transition for hover effects */
@@ -17,8 +18,8 @@
     }
 
     article h3 a::before {
-        content: " \2192"; /* Unicode for the right arrow (→) */
-        padding-left: 5px; /* Add some space between the link text and the arrow */
+        content: " \1F4D6"; /* Unicode for the right arrow (→) */
+        padding-right: 10px; /* Add some space between the link text and the arrow */
     }
 
     article h3 {
@@ -26,11 +27,40 @@
         margin-top: 0;               /* Remove top margin for better alignment */
         margin-bottom: 5px;         /* A little space between the title and content */
     }
+    
+    /* Targeting anchor links inside <p> tags */
+    p:nth-of-type(18) a {
+        display: inline-block; /* Allows setting of width and height */
+        padding: 10px 15px; /* Spacing inside the button */
+        background-color: #FFCC02; /* Button color */
+        color: #ffffff; /* Text color */
+        border: none; /* Removes the default border */
+        border-radius: 4px; /* Rounds the corners of the button */
+        text-decoration: none; /* Removes the default underline */
+        font-weight: bold; /* Bold text */
+        cursor: pointer; /* Makes the cursor indicate it's clickable */
+        transition: background-color 0.3s ease; /* Optional: smooth color change on hover */
+    }
+
 
 </style>
 
 <div id="rssWidget">
     <script>
+    function formatDate(isoDateString) {
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const date = new Date(isoDateString);
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${month} ${day}, ${year}`;
+}
+
         const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/announcements-rss.xml';
 
         fetch(`${RSS_URL}`)
@@ -47,7 +77,7 @@
                     const body = el.querySelector('body').textContent;
                     html += `
                 <article>
-                    <h3><a href="${link}" target="_blank">${title} by ${author}, Published ${published_date}</a></h3>
+                    <h3><a href="${link}" target="_blank">${title} by ${author}, Published ${formatDate(published_date)}</a></h3>
                     <div>${body}</div>
                 </article>
             `;

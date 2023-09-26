@@ -17,8 +17,8 @@
     }
 
     article h3 a::before {
-        content: " \2192"; /* Unicode for the right arrow (→) */
-        padding-left: 5px; /* Add some space between the link text and the arrow */
+        content: " \1F4D6"; /* Unicode for book */
+        padding-right: 10px; /* Add some space between the link text and the arrow */
     }
 
     article h3 {
@@ -31,6 +31,20 @@
 
 <div id="rssWidget">
     <script>
+    function formatDate(isoDateString) {
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const date = new Date(isoDateString);
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${month} ${day}, ${year}`;
+}
+
         const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/rss.xml';
 
         fetch(`${RSS_URL}`)
@@ -46,7 +60,7 @@
                     const published_date = el.querySelector('published_date').textContent;
                     html += `
                 <article>
-                    <h3><a href="${link}" target="_blank">${title} by ${author}, Published ${published_date}</a></h3>
+                    <h3><a href="${link}" target="_blank">${title} by ${author}, Published ${formatDate(published_date)}</a></h3>
                 </article>
             `;
                 });
