@@ -48,6 +48,8 @@ if response.status_code == 200 and 'application/json' in response.headers.get('c
         item_author.text = post['user_name']
         item_published = SubElement(item, 'published_date')
         item_published.text = post['published_at']
+        item_cover_image_url = SubElement(item, 'cover_image_url')
+        item_cover_image_url.text = post['cover_image_url']
 
         # Create a CDATA section for the body content
         item_body = SubElement(item, 'body')

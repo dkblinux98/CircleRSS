@@ -1,65 +1,139 @@
 <style>
-    /* Basic styling for the article element */
-    article {
-        font-family: lora;
-        padding: 5px;               /* Padding inside the box */
-        margin-bottom: 5px;         /* Margin at the bottom for spacing between articles */
-        transition: background-color 0.1s ease;  /* Smooth transition for hover effects */
+/* Your CSS */
+
+/* Container div that holds the image and excerpt within <item> */
+#rssWidget item > div {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+#rssWidget .post-image {
+    max-width: 40%;
+    height: auto;
+}
+
+/* limit the width of the excerpt to avoid it stretching too far */
+#rssWidget .excerpt-content {
+    flex: 1;
+    max-width: 60%;
+}
+
+#rssWidget item {
+    font-family: lora;
+    padding: 10px;
+    margin: 0;
+    background-color: rgba(255, 204, 2, 0.5);
+    border: 1px rgba(50, 39, 59, 0.6);
+    border-radius: 5px;
+    transition: background-color 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);
+}
+
+#rssWidget item:hover {
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+}
+
+#rssWidget item h3 a {
+    color: #000;
+    text-decoration: none;
+}
+
+#rssWidget item h3 a:hover {
+    text-decoration: none;
+    background-color: rgba(50, 39, 59, 0.4);
+    color: #fff;
+}
+
+#rssWidget item h3 a::before {
+    content: " \1F4D6 ";
+    padding-right: 10px;
+}
+
+#rssWidget item h3 {
+    font-size: 1.7em;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+#rssWidget {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 15px;
+    padding: 15px;
+    background-color: rgba(239, 240, 241, 0.7);
+    border-top-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+#rssWidget .item-meta {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: #000;
+}
+
+#rssWidget .item-meta span {
+    margin-right: 3px;
+    margin-left: 3px;
+}
+
+#rssWidget .read-more {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #FFCC02;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Mobile specific styles */
+@media (max-width: 768px) {
+    #rssWidget item > div {
+        flex-direction: column;
     }
 
-    article h3 a {
-        color: #000;              /* A nice shade of blue for links */
-        text-decoration: none;       /* Remove underline from links */
+    #rssWidget .post-image {
+        max-width: 100%;
+        margin-bottom: 10px;
     }
 
-    article h3 a:hover {
-        text-decoration: none;  /* Add underline on hover for title links only */
-        background-color: #FFCC02;   /* Slightly darker background on hover */
+    #rssWidget .excerpt-content {
+        max-width: 100%;
     }
-
-    article h3 a::before {
-        content: " \1F4D6"; /* Unicode for the right arrow (→) */
-        padding-right: 10px; /* Add some space between the link text and the arrow */
-    }
-
-    article h3 {
-        font-size: 1em;            /* Make the title a bit larger */
-        margin-top: 0;               /* Remove top margin for better alignment */
-        margin-bottom: 5px;         /* A little space between the title and content */
-    }
-    
-    /* Targeting anchor links inside <p> tags */
-    p:nth-of-type(18) a {
-        display: inline-block; /* Allows setting of width and height */
-        padding: 10px 15px; /* Spacing inside the button */
-        background-color: #FFCC02; /* Button color */
-        color: #ffffff; /* Text color */
-        border: none; /* Removes the default border */
-        border-radius: 4px; /* Rounds the corners of the button */
-        text-decoration: none; /* Removes the default underline */
-        font-weight: bold; /* Bold text */
-        cursor: pointer; /* Makes the cursor indicate it's clickable */
-        transition: background-color 0.3s ease; /* Optional: smooth color change on hover */
-    }
-
+}
 
 </style>
 
 <div id="rssWidget">
     <script>
-    function formatDate(isoDateString) {
-    const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+        function formatDate(isoDateString) {
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
 
-    const date = new Date(isoDateString);
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
+            const date = new Date(isoDateString);
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
 
-    return `${month} ${day}, ${year}`;
-}
+            return `${month} ${day}, ${year}`;
+        }
+
+        function truncateBody(bodyContent, limit = 800) {
+            if (window.innerWidth <= 768) {
+                limit = 400;
+            }
+
+            if (bodyContent.length > limit) {
+                return `${bodyContent.substring(0, limit)}...`;
+            }
+            return bodyContent;
+        }
 
         const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/announcements-rss.xml';
 
@@ -75,12 +149,19 @@
                     const author = el.querySelector('author').textContent;
                     const published_date = el.querySelector('published_date').textContent;
                     const body = el.querySelector('body').textContent;
+                    const cover_image_url = el.querySelector('cover_image_url').textContent;
+                    const excerpt = truncateBody(body);
                     html += `
-                <article>
-                    <h3><a href="${link}" target="_blank">${title} by ${author}, Published ${formatDate(published_date)}</a></h3>
-                    <div>${body}</div>
-                </article>
-            `;
+                    <item>
+                        <p class="item-meta"><span>${author}</span> &bull; <span>${formatDate(published_date)}</span></p>
+                        <h3><a href="${link}" target="_blank">${title}</a></h3>
+                        <div>
+                            <img src="${cover_image_url}" alt="${title}" class="post-image">
+                            <div class="excerpt-content">${excerpt}</div>
+                        </div>
+                        <p><a href="${link}" class="read-more" target="_blank">Read More</a></p>
+                    </item>
+                    `;
                 });
                 document.getElementById('rssWidget').innerHTML = html;
             })
