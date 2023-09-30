@@ -57,6 +57,27 @@ item h3 {
     margin-right: 3px;           
     margin-left: 3px;
 }
+.more-articles {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.articles-button {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #ffffff;
+    background-color: #FFCC02;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.articles-button:hover {
+    background-color: #E5B802;  /* a slightly darker shade on hover */
+    transform: scale(1.05);     /* scales the button a bit larger on hover */
+}
+
 </style>
 <div id="rssWidget">
     <script>
@@ -82,7 +103,7 @@ item h3 {
         .then(data => {
             const items = data.querySelectorAll('item');
             let html = '';
-            items.forEach(el => {
+        Array.from(items).slice(0, 8).forEach(el => {
                 const title = el.querySelector('title').textContent;
                 const link = el.querySelector('link').textContent;
                 const author = el.querySelector('author').textContent;
@@ -94,7 +115,9 @@ item h3 {
                     </item>
                 `;
             });
-            document.getElementById('rssWidget').innerHTML = html;
+            const moreArticlesLink = '<div class="more-articles"><a href="https://community.opusliteraryalliance.org/c/blog/" class="articles-button" target="_blank">Explore More</a></div>';
+document.getElementById('rssWidget').innerHTML = html + moreArticlesLink;
+
         })
         .catch(error => {
             console.error('There was an error!', error);
