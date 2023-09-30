@@ -106,6 +106,21 @@
     }
 }
 
+#rssWidget .articles-button {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #ffffff;
+    background-color: #FFCC02;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#rssWidget .articles-button:hover {
+    background-color: #E5B802;  /* a slightly darker shade on hover */
+    transform: scale(1.05);     /* scales the button a bit larger on hover */
+}
 </style>
 
 <div id="rssWidget">
@@ -143,7 +158,10 @@
             .then(data => {
                 const items = data.querySelectorAll('item');
                 let html = '';
+                let count = 0; // For limiting the items
+                
                 items.forEach(el => {
+                    if (count >= 5) return;  // If we have processed 10 items, stop.
                     const title = el.querySelector('title').textContent;
                     const link = el.querySelector('link').textContent;
                     const author = el.querySelector('author').textContent;
@@ -162,7 +180,10 @@
                         <p><a href="${link}" class="read-more" target="_blank">Read More</a></p>
                     </item>
                     `;
+                count++; // Increment the count for each processed item.
                 });
+                html += `<p><a href="https://community.opusliteraryalliance.org/c/announcements/" class="articles-button">Browse All News</a></p>`; // Add the new button after all items.
+
                 document.getElementById('rssWidget').innerHTML = html;
             })
             .catch(error => {
