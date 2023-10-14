@@ -1,22 +1,18 @@
 <style>
 /* Your CSS */
-
-/* Container div that holds the image and excerpt within <item> */
 #rssWidget item > div {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
+    display: block; /* Stacking the elements vertically */
 }
 
 #rssWidget .post-image {
-    max-width: 40%;
+    max-width: 100%;
+    display: block;
+    margin: 10px auto; /* Center the image */
     height: auto;
 }
 
-/* limit the width of the excerpt to avoid it stretching too far */
 #rssWidget .excerpt-content {
-    flex: 1;
-    max-width: 60%;
+    max-width: 100%; /* Allow the excerpt to take full width */
 }
 
 #rssWidget item {
@@ -90,22 +86,6 @@
     transition: background-color 0.3s ease;
 }
 
-/* Mobile specific styles */
-@media (max-width: 768px) {
-    #rssWidget item > div {
-        flex-direction: column;
-    }
-
-    #rssWidget .post-image {
-        max-width: 100%;
-        margin-bottom: 10px;
-    }
-
-    #rssWidget .excerpt-content {
-        max-width: 100%;
-    }
-}
-
 #rssWidget .articles-button {
     display: inline-block;
     padding: 10px 20px;
@@ -118,76 +98,78 @@
 }
 
 #rssWidget .articles-button:hover {
-    background-color: #E5B802;  /* a slightly darker shade on hover */
-    transform: scale(1.05);     /* scales the button a bit larger on hover */
+    background-color: #E5B802;
+    transform: scale(1.05);
 }
 </style>
 
 <div id="rssWidget">
     <script>
-        function formatDate(isoDateString) {
-            const months = [
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-            ];
+function formatDate(isoDateString) {
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
 
-            const date = new Date(isoDateString);
-            const day = date.getDate();
-            const month = months[date.getMonth()];
-            const year = date.getFullYear();
+    const date = new Date(isoDateString);
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
 
-            return `${month} ${day}, ${year}`;
-        }
+    return `${month} ${day}, ${year}`;
+}
 
-        function truncateBody(bodyContent, limit = 700) {
-            if (window.innerWidth <= 768) {
-                limit = 400;
-            }
+function truncateBody(bodyContent, limit = 580) {
+    if (bodyContent.length <= limit) {
+        return bodyContent;
+    }
 
-            if (bodyContent.length > limit) {
-                return `${bodyContent.substring(0, limit)}...`;
-            }
-            return bodyContent;
-        }
+    // Find the last space before the limit to avoid breaking words.
+    const lastSpaceIndex = bodyContent.lastIndexOf(' ', limit);
+    return `${bodyContent.substring(0, lastSpaceIndex)}...`;
+}
 
-        const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/announcements-rss.xml';
+const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/announcements-rss.xml';
 
-        fetch(`${RSS_URL}`)
-            .then(response => response.text())
-            .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-            .then(data => {
-                const items = data.querySelectorAll('item');
-                let html = '';
-                let count = 0; // For limiting the items
-                
-                items.forEach(el => {
-                    if (count >= 5) return;  // If we have processed 10 items, stop.
-                    const title = el.querySelector('title').textContent;
-                    const link = el.querySelector('link').textContent;
-                    const author = el.querySelector('author').textContent;
-                    const published_date = el.querySelector('published_date').textContent;
-                    const body = el.querySelector('body').textContent;
-                    const cover_image_url = el.querySelector('cover_image_url').textContent;
-                    const excerpt = truncateBody(body);
-                    html += `
-                    <item>
-                        <p class="item-meta"><span>${author}</span> &bull; <span>${formatDate(published_date)}</span></p>
-                        <h3><a href="${link}" target="_blank">${title}</a></h3>
-                        <div>
-                            <img src="${cover_image_url}" alt="${title}" class="post-image">
-                            <div class="excerpt-content">${excerpt}</div>
-                        </div>
-                        <p><a href="${link}" class="read-more" target="_blank">Read More</a></p>
-                    </item>
-                    `;
-                count++; // Increment the count for each processed item.
-                });
-                html += `<p><a href="https://community.opusliteraryalliance.org/c/announcements/" class="articles-button">Browse All News</a></p>`; // Add the new button after all items.
+fetch(`${RSS_URL}`)
+    .then(response => response.text())
+    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+    .then(data => {
+        const items = data.querySelectorAll('item');
+        let html = '';
+        let count = 0; // For limiting the items
+        
+        items.forEach(el => {
+            if (count >= 10) return;
+            const title = el.querySelector('title').textContent;
+            const link = el.querySelector('link').textContent;
+            const author = el.querySelector('author').textContent;
+            const published_date = el.querySelector('published_date').textContent;
+            const body = el.querySelector('body').textContent;
+            const cover_image_url = el.querySelector('cover_image_url').textContent;
+            const excerpt = truncateBody(body);
+            html += `
+                <item>
+                    <p class="item-meta"><span>${author}</span> &bull; <span>${formatDate(published_date)}</span></p>
+                    <h3><a href="${link}" target="_blank">${title}</a></h3>
+                    <div>
+                        <img src="${cover_image_url}" alt="${title}" class="post-image">
+                        <div class="excerpt-content">${excerpt}</div>
+                    </div>
+                    <p><a href="${link}" class="read-more" target="_blank">Read More</a></p>
+                </item>
+            `;
+            count++;
+        });
 
-                document.getElementById('rssWidget').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });
+        // Append the 'Browse All News' button outside of the loop
+        html += `<div><p><a href="https://community.opusliteraryalliance.org/c/announcements/" class="articles-button">Browse All News</a></p></div>`;
+        
+        document.getElementById('rssWidget').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('There was an error!', error);
+    });
+
     </script>
 </div>
