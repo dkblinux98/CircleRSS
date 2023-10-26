@@ -34,7 +34,7 @@ if response.status_code == 200 and 'application/json' in response.headers.get('c
     title = SubElement(channel, 'title')
     title.text = "Opus Literary Alliance Community Announcements"
     link = SubElement(channel, 'link')
-    link.text = "https://olarss.s3.us-east-2.amazonaws.com/announcements-rss.xml"
+    link.text = "https://olacirclerss.s3.us-east-2.amazonaws.com/announcements-rss.xml"
     description = SubElement(channel, 'description')
     description.text = "Your OLA Community Announcements RSS Feed"
 

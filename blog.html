@@ -1,126 +1,126 @@
 <style>
-/* Basic styling for the article element */
-item {
-    font-family: lora;
-    padding: 10px;  
-    margin: 0;  
-    background-color: rgba(50, 39, 59, 0.6);  /* 70% opaque background color */
-    border: 1px rgba(50, 39, 59, 0.6);  
-    border-radius: 5px;  
-    transition: background-color 0.1s ease, box-shadow 0.2s ease;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);  /* Darker and wider drop shadow */
-}
+    /* Basic styling for the article element */
+    item {
+        font-family: lora;
+        padding: 10px;
+        margin: 0;
+        background-color: rgba(50, 39, 59, 0.6);  /* 70% opaque background color */
+        border: 1px rgba(50, 39, 59, 0.6);
+        border-radius: 5px;
+        transition: background-color 0.1s ease, box-shadow 0.2s ease;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);  /* Darker and wider drop shadow */
+    }
 
-item:hover {
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);  /* Even darker and wider shadow on hover */
-}
+    item:hover {
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);  /* Even darker and wider shadow on hover */
+    }
 
-item h3 a {
-    color: #fff;
-    text-decoration: none; 
-}
+    item h3 a {
+        color: #fff;
+        text-decoration: none;
+    }
 
-item h3 a:hover {
-    text-decoration: none;
-    background-color: rgba(50, 39, 59, 0.4);  /* 70% opaque background color */
-    color: #fff;
-}
+    item h3 a:hover {
+        text-decoration: none;
+        background-color: rgba(50, 39, 59, 0.4);  /* 70% opaque background color */
+        color: #fff;
+    }
 
-item h3 a::before {
-    content: " \1F4D6 "; /* Unicode for book */
-    padding-right: 10px; 
-}
+    item h3 a::before {
+        content: " \1F4D6 "; /* Unicode for book */
+        padding-right: 10px;
+    }
 
-item h3 {
-    font-size: 1.7em;            
-    margin-top: 0;               
-    margin-bottom: 5px;         
-}
+    item h3 {
+        font-size: 1.7em;
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
 
-#rssWidget {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 15px;
-    padding: 15px;
-    background-color: rgba(239, 240, 241, 0.7);  
-    border-top-left-radius: 15px;           
-    border-bottom-right-radius: 15px;       
-}
+    #rssWidget {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 15px;
+        padding: 15px;
+        background-color: rgba(239, 240, 241, 0.7);
+        border-top-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
 
-.item-meta {
-    font-size: 0.9em;             
-    margin-bottom: 5px;          
-    color: #000;                 
-}
+    .item-meta {
+        font-size: 0.9em;
+        margin-bottom: 5px;
+        color: #000;
+    }
 
-.item-meta span {
-    margin-right: 3px;           
-    margin-left: 3px;
-}
-.more-articles {
-    margin-top: 20px;
-    text-align: center;
-}
+    .item-meta span {
+        margin-right: 3px;
+        margin-left: 3px;
+    }
+    .more-articles {
+        margin-top: 20px;
+        text-align: center;
+    }
 
-.articles-button {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #ffffff;
-    background-color: #FFCC02;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
+    .articles-button {
+        display: inline-block;
+        padding: 10px 20px;
+        color: #ffffff;
+        background-color: #FFCC02;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 4px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
 
-.articles-button:hover {
-    background-color: #E5B802;  /* a slightly darker shade on hover */
-    transform: scale(1.05);     /* scales the button a bit larger on hover */
-}
+    .articles-button:hover {
+        background-color: #E5B802;  /* a slightly darker shade on hover */
+        transform: scale(1.05);     /* scales the button a bit larger on hover */
+    }
 
 </style>
 <div id="rssWidget">
     <script>
-    function formatDate(isoDateString) {
-        const months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
+        function formatDate(isoDateString) {
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
 
-        const date = new Date(isoDateString);
-        const day = date.getDate();
-        const month = months[date.getMonth()];
-        const year = date.getFullYear();
+            const date = new Date(isoDateString);
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
 
-        return `${month} ${day}, ${year}`;
-    }
+            return `${month} ${day}, ${year}`;
+        }
 
-    const RSS_URL = 'https://olacirclerss.s3.us-east-2.amazonaws.com/rss.xml';
+        const RSS_URL = 'https://olacirclerss.s3.us-east-2.amazonaws.com/rss.xml';
 
-    fetch(`${RSS_URL}`)
-        .then(response => response.text())
-        .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-        .then(data => {
-            const items = data.querySelectorAll('item');
-            let html = '';
-        Array.from(items).slice(0, 8).forEach(el => {
-                const title = el.querySelector('title').textContent;
-                const link = el.querySelector('link').textContent;
-                const author = el.querySelector('author').textContent;
-                const published_date = el.querySelector('published_date').textContent;
-                html += `
+        fetch(`${RSS_URL}`)
+            .then(response => response.text())
+            .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+            .then(data => {
+                const items = data.querySelectorAll('item');
+                let html = '';
+                Array.from(items).slice(0, 8).forEach(el => {
+                    const title = el.querySelector('title').textContent;
+                    const link = el.querySelector('link').textContent;
+                    const author = el.querySelector('author').textContent;
+                    const published_date = el.querySelector('published_date').textContent;
+                    html += `
                     <item>
                         <p class="item-meta"><span>${author}</span> &bull; <span>${formatDate(published_date)}</span></p>
                         <h3><a href="${link}" target="_blank">${title}</a></h3>
                     </item>
                 `;
-            });
-            const moreArticlesLink = '<div class="more-articles"><a href="https://community.opusliteraryalliance.org/c/blog/" class="articles-button" target="_blank">Explore More</a></div>';
-document.getElementById('rssWidget').innerHTML = html + moreArticlesLink;
+                });
+                const moreArticlesLink = '<div class="more-articles"><a href="https://community.opusliteraryalliance.org/c/blog/" class="articles-button" target="_blank">Explore More</a></div>';
+                document.getElementById('rssWidget').innerHTML = html + moreArticlesLink;
 
-        })
-        .catch(error => {
-            console.error('There was an error!', error);
-        });
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
     </script>
 </div>
