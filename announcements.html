@@ -129,7 +129,7 @@ function truncateBody(bodyContent, limit = 580) {
     return `${bodyContent.substring(0, lastSpaceIndex)}...`;
 }
 
-const RSS_URL = 'https://olarss.s3.us-east-2.amazonaws.com/announcements-rss.xml';
+const RSS_URL = 'https://olacirclerss.s3.us-east-2.amazonaws.com/announcements-rss.xml';
 
 fetch(`${RSS_URL}`)
     .then(response => response.text())
