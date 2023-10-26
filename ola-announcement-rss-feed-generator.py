@@ -22,7 +22,6 @@ if os.path.exists(config_file_path):
         bucket_name = config['Credentials']['bucket_name']
         circle_token = config['Credentials']['circle_token']
         announcements_url = config['URLs']['announcements_url']
-        blog_url = config['URLs']['blog_url']
     except KeyError as e:
         print(f"Key not found in the config file: {e}")
     except configparser.NoSectionError as e:
@@ -36,7 +35,6 @@ else:
 
 # Initialize an S3 client
 s3 = boto3.client('s3', aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
-
 
 payload = {}
 headers = {'Authorization': f"{circle_token}"}
