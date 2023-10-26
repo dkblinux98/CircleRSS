@@ -3,16 +3,40 @@ import json
 import boto3
 import os
 from xml.etree.ElementTree import Element, SubElement, ElementTree, tostring
+import configparser
 
-aws_access_key = os.environ['aws_access_key']
-aws_secret_key = os.environ['aws_secret_key']
-bucket_name = os.environ['bucket_name']
+# Path to the config file (Used for running the script locally instead of via Pipedream
+config_file_path = os.path.expanduser('~/.ola/config.ini')
+
+# Check if the file exists
+if os.path.exists(config_file_path):
+    # Initialize the configparser
+    config = configparser.ConfigParser()
+    
+    # Read the config file
+    config.read(config_file_path)
+
+    try:
+        aws_access_key = config['Credentials']['aws_access_key']
+        aws_secret_key = config['Credentials']['aws_secret_key']
+        bucket_name = config['Credentials']['bucket_name']
+        circle_token = config['Credentials']['circle_token']
+        announcements_url = config['URLs']['announcements_url']
+        blog_url = config['URLs']['blog_url']
+    except KeyError as e:
+        print(f"Key not found in the config file: {e}")
+    except configparser.NoSectionError as e:
+        print(f"Section not found in the config file: {e}")
+else:
+        aws_access_key = os.environ['aws_access_key']
+        aws_secret_key = os.environ['aws_secret_key']
+        bucket_name = os.environ['bucket_name']
+        announcements_url = os.environ['announcements_url']
+        circle_token = os.environ['circle_token']
 
 # Initialize an S3 client
 s3 = boto3.client('s3', aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
 
-announcements_url = os.environ['announcements_url']
-circle_token = os.environ['circle_token']
 
 payload = {}
 headers = {'Authorization': f"{circle_token}"}
