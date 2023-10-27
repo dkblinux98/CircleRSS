@@ -30,7 +30,7 @@ else:
     aws_access_key = os.environ['aws_access_key']
     aws_secret_key = os.environ['aws_secret_key']
     bucket_name = os.environ['bucket_name']
-    blog_url = os.environ['announcements_url']
+    blog_url = os.environ['blog_url']
     circle_token = os.environ['circle_token']
 
 # Initialize an S3 client
