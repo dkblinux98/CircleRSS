@@ -100,7 +100,7 @@ def post_to_circle(post_data, user_email=None):
 
     # Construct the URL with the encoded data
     url = (f"https://app.circle.so/api/v1/posts?"
-           f"community_id={community_id}&space_id=884538&"
+           f"community_id={community_id}&space_id={space_id}&"
            f"name={title_encoded}&body={body_encoded}&"
            f"is_pinned=false&is_comments_enabled=true&"
            f"is_comments_closed=false&is_liking_enabled=true&"
