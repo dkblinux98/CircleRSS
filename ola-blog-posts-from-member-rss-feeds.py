@@ -6,8 +6,8 @@ import os
 import configparser
 
 FEED_URLS = {
-    "https://sandradehelen.substack.com/feed": "dehelens@gmail.com",
-    "https://annettemoriauthor.com/feed/": "annettemori0859@gmail.com"
+    "https://example.feed.com/feed": "member_author@email.com",
+    "https://example2.feed.com/feed/": "member_author2@email.com"
     # Add more mappings as needed
 }
 
